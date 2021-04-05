@@ -3,6 +3,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace PokemonApp
 {
@@ -14,11 +15,10 @@ namespace PokemonApp
             string input = Console.ReadLine();
 
             Console.WriteLine("...");
-            GetPokemon(input);
-            Console.ReadLine();
+            Task<bool> programWorks = GetPokemon(input);
         }
 
-        public static async void GetPokemon(string pokeName)
+        public static async Task<bool> GetPokemon(string pokeName)
         {
             try
             {
@@ -64,11 +64,15 @@ Weight: {pokeItem.Weight}
 Types: {totalTypes}
 Encounters: {canEncounter}
 {totalLocations}");
+
+                return true;
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                System.Console.WriteLine("HELP: Maybe you misspelled the name...?");
+                Console.WriteLine("HELP: Maybe you misspelled the name...?");
+
+                return false;
             }
         }
 
