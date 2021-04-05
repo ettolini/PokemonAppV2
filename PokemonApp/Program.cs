@@ -6,38 +6,46 @@ namespace PokemonApp
     {
         static void Main(string[] args)
         {
-            PokeProcessor pokeProcessor = new PokeProcessor();
-            bool continueProgram = true;
-            string input;
-
-            Console.WriteLine("Welcome to my humble Pokémon App!");
-
-            while (continueProgram)
+            try
             {
-                Console.WriteLine($@"What would you like to do?
+                PokeProcessor pokeProcessor = new PokeProcessor();
+                bool continueProgram = true;
+                string input;
+
+                Console.WriteLine("Welcome to my humble Pokémon App!");
+
+                while (continueProgram)
+                {
+                    Console.WriteLine($@"What would you like to do?
 1. Enter a Pokémon's name to get their info.
 2. Enter '{pokeProcessor.quitCommand}' to quit the program.
 ");
 
-                input = Console.ReadLine();
+                    input = Console.ReadLine();
 
-                if (input != pokeProcessor.quitCommand)
-                {
-                    Console.WriteLine(@"...
+                    if (input != pokeProcessor.quitCommand)
+                    {
+                        Console.WriteLine(@"...
 ");
-                    continueProgram = pokeProcessor.GetPokemon(input).Result;
+                        continueProgram = pokeProcessor.GetPokemon(input).Result;
 
-                    Console.WriteLine("Press enter to continue.");
-                    Console.ReadLine();
+                        Console.WriteLine("Press enter to continue.");
+                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        continueProgram = false;
+                    }
                 }
-                else
-                {
-                    continueProgram = false;
-                }
-            }
 
-            Console.WriteLine(@"
+                Console.WriteLine(@"
 I hope you liked it!");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+            
         }
     }
 }
