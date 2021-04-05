@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace PokemonApp
 {
@@ -11,81 +6,38 @@ namespace PokemonApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Please, enter a Pokemon's name: ");
-            string input = Console.ReadLine();
+            PokeProcessor pokeProcessor = new PokeProcessor();
+            bool continueProgram = true;
+            string input;
 
-            Console.WriteLine("...");
-            Task<bool> programWorks = GetPokemon(input);
-        }
+            Console.WriteLine("Welcome to my humble Pokémon App!");
 
-        public static async Task<bool> GetPokemon(string pokeName)
-        {
-            try
+            while (continueProgram)
             {
-                var content = (string)await GetData(pokeName);
-                PokeItem pokeItem = JsonConvert.DeserializeObject<PokeItem>(content);
+                Console.WriteLine($@"What would you like to do?
+1. Enter a Pokémon's name to get their info.
+2. Enter '{pokeProcessor.quitCommand}' to quit the program.
+");
 
-                content = (string)await GetData($"{pokeItem.Id}/encounters");
-                JObject[] locationEncounters = JsonConvert.DeserializeObject<JObject[]>(content);
-                string canEncounter;
-                string[] locationNames = new string[locationEncounters.Length];
+                input = Console.ReadLine();
 
-                if (locationEncounters.Length > 0)
+                if (input != pokeProcessor.quitCommand)
                 {
-                    canEncounter = "This Pokémon could be encountered in the following areas...";
-                    pokeItem.LocationEncounters = locationEncounters;
+                    Console.WriteLine(@"...
+");
+                    continueProgram = pokeProcessor.GetPokemon(input).Result;
 
-                    for (var i = 0; i < pokeItem.LocationEncounters.Length; i++)
-                    {
-                        locationNames[i] = (string)pokeItem.LocationEncounters[i]["location_area"]["name"];
-                        locationNames[i] = locationNames[i].Replace("-", " ");
-                    }
+                    Console.WriteLine("Press enter to continue.");
+                    Console.ReadLine();
                 }
                 else
                 {
-                    canEncounter = "There's no known area where this Pokémon could be found...";
+                    continueProgram = false;
                 }
-
-                string totalLocations = "";
-
-                foreach (var location in locationNames)
-                {
-                    totalLocations += $@"- {location}
-";
-                }
-
-                string totalTypes = $"{pokeItem.Types[0]["type"]["name"]}";
-                if (pokeItem.Types.Length > 1)
-                    totalTypes += $" & {pokeItem.Types[1]["type"]["name"]}";
-
-                Console.WriteLine($@"Id: {pokeItem.Id}
-Height: {pokeItem.Height}
-Weight: {pokeItem.Weight}
-Types: {totalTypes}
-Encounters: {canEncounter}
-{totalLocations}");
-
-                return true;
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-                Console.WriteLine("HELP: Maybe you misspelled the name...?");
 
-                return false;
-            }
-        }
-
-        public static async Task<string> GetData(string url)
-        {
-            HttpClient client = new HttpClient() { BaseAddress = new Uri("http://pokeapi.co/api/v2/pokemon/") };
-
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/json");
-
-            var response = await client.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
-
-            return content;
+            Console.WriteLine(@"
+I hope you liked it!");
         }
     }
 }
