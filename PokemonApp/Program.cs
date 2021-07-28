@@ -17,7 +17,7 @@ namespace PokemonApp
                 while (continueProgram)
                 {
                     Console.WriteLine($@"What would you like to do?
-1. Enter a Pokémon's name to get their info.
+1. Enter a Pokémon's name or its ID to get their info.
 2. Enter '{pokeProcessor.quitCommand}' to quit the program.
 ");
 
